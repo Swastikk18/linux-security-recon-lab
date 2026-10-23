@@ -1,12 +1,14 @@
-# Linux Fundamentals
+# Linux Fundamentals — Practical Report
 
 ## Objective
-To understand basic Linux commands, directory navigation, file management, file permissions, users, and groups using Kali Linux.
+To understand Linux commands, directory navigation, file management, file permissions, users, groups, running processes, and operating system information using Kali Linux.
+
+---
 
 ## Experiment 1: Basic Linux Commands
 
 ### Aim
-To learn basic Linux commands for identifying the current directory, logged-in user, and directory contents.
+To identify the current working directory, logged-in user, and directory contents.
 
 ### Commands Used
 ```bash
@@ -23,7 +25,8 @@ Output:
 ```text
 /home/kali/Desktop
 ```
-Observation: Displays the present working directory.
+
+Displays the current working directory.
 
 **2. `whoami`**
 
@@ -31,7 +34,8 @@ Output:
 ```text
 kali
 ```
-Observation: Displays the username of the currently logged-in user.
+
+Displays the username of the currently logged-in user.
 
 **3. `ls -la`**
 
@@ -41,17 +45,18 @@ total 8
 drwxr-xr-x  2 kali kali 4096 Jul 21 15:38 .
 drwx------ 18 kali kali 4096 Oct 23 10:12 ..
 ```
-Observation: Lists files and directories, including hidden entries, along with their permissions and other details. The `.` represents the current directory, and `..` represents the parent directory.
+
+Lists files and directories, including hidden entries, with detailed information. The `.` represents the current directory, and `..` represents the parent directory.
 
 ### Result
-Basic Linux commands were executed successfully to identify the current directory, user, and directory contents.
+Basic Linux commands were executed to identify the current directory, username, and directory contents.
 
 ---
 
 ## Experiment 2: Linux File Permissions
 
 ### Aim
-To create a file, examine its permissions, and modify its permissions using the `chmod` command.
+To create a file, examine its permissions, and modify them using `chmod`.
 
 ### Commands Used
 ```bash
@@ -63,51 +68,34 @@ ls -l test.txt
 
 ### Output and Observations
 
-**1. Creating a file and checking its initial permissions**
-
-Command:
-```bash
-touch test.txt
-ls -l test.txt
-```
-
-Output:
+**Initial permissions:**
 ```text
 -rw-rw-r-- 1 kali kali 0 Oct 23 10:14 test.txt
 ```
 
-Observation: An empty file named `test.txt` was created. Its initial permissions allowed the owner and group to read and write, while others could read it.
-
-**2. Changing file permissions**
-
-Command:
-```bash
-chmod 644 test.txt
-ls -l test.txt
-```
-
-Output:
+**After running `chmod 644 test.txt`:**
 ```text
 -rw-r--r-- 1 kali kali 0 Oct 23 10:14 test.txt
 ```
 
-Observation: The `chmod 644` command changed the file permissions.
+- `touch test.txt`: Creates an empty file.
+- `ls -l test.txt`: Displays file permissions and details.
+- `chmod 644 test.txt`: Changes file permissions.
+- Owner (`rw-`): Read and write access.
+- Group (`r--`): Read-only access.
+- Others (`r--`): Read-only access.
 
-- Owner (`rw-`): Read and write.
-- Group (`r--`): Read only.
-- Others (`r--`): Read only.
-
-The numeric permission `644` represents `6` (read + write), `4` (read), and `4` (read).
+The numeric permission `644` represents owner permissions `6` (read + write), group permissions `4` (read), and others' permissions `4` (read).
 
 ### Result
-A file was created, its initial permissions were examined, and its permissions were successfully changed to `644`.
+File permissions were examined and successfully changed to `644`.
 
 ---
 
 ## Experiment 3: Linux User and Group Identification
 
 ### Aim
-To identify the current user's UID, primary GID, and supplementary group memberships.
+To identify the current user's UID, primary GID, and supplementary groups.
 
 ### Command Used
 ```bash
@@ -120,24 +108,22 @@ uid=1000(kali) gid=1000(kali) groups=1000(kali),4(adm),20(dialout),24(cdrom),25(
 ```
 
 ### Observations
-
-- **UID:** `1000` — identifies the user account `kali`.
-- **GID:** `1000` — identifies the primary group `kali`.
-- **Groups:** Lists the supplementary groups associated with the user.
+- **UID:** `1000` identifies the user account `kali`.
+- **GID:** `1000` identifies the primary group `kali`.
+- **Groups:** Displays the supplementary groups associated with the user.
 - **sudo:** Membership may allow administrative commands, subject to system configuration.
-- **wireshark:** A group associated with Wireshark-related permissions on this system.
+- **wireshark:** A group associated with Wireshark-related permissions.
 - **vboxsf:** A group commonly associated with VirtualBox shared folders.
 
 ### Result
-The `id` command was executed successfully to identify the current user's identity and group memberships.
+The `id` command was used to inspect the current user's identity and group memberships.
 
----
 ---
 
 ## Experiment 4: Viewing Running Processes
 
 ### Aim
-To identify and understand processes running in the current Linux terminal session.
+To identify processes running in the current terminal session.
 
 ### Command Used
 ```bash
@@ -146,25 +132,103 @@ ps
 
 ### Output
 ```text
-PID    TTY      TIME       CMD
-2198   pts/0    00:00:00   zsh
-7686   pts/0    00:00:00   ps
+PID TTY          TIME CMD
+2198 pts/0    00:00:00 zsh
+7686 pts/0    00:00:00 ps
 ```
 
 ### Observations
-- **PID:** Displays the unique process identification number.
-- **TTY:** Identifies the terminal associated with the process.
-- **TIME:** Displays the CPU time consumed by the process.
-- **CMD:** Shows the command associated with the process.
-- `zsh` is the shell used in the current terminal session.
-- `ps` displays the process information for the current terminal session; the command itself may also appear in the output.
+- **PID:** The unique process identification number.
+- **TTY:** The terminal associated with the process.
+- **TIME:** CPU time consumed by the process.
+- **CMD:** The command or program name.
+- `zsh` is the command-line shell used in the current terminal.
+- `ps` displays process information for the current terminal session.
 
 ### Result
-The `ps` command was executed successfully to view processes associated with the current terminal session.
+The `ps` command was executed to view processes associated with the current terminal.
+
 ---
+
+## Experiment 5: Identifying Linux Distribution Information
+
+### Aim
+To identify the Linux distribution, version, and related system information.
+
+### Command Used
+```bash
+cat /etc/os-release
+```
+
+### Output
+```text
+PRETTY_NAME="Kali GNU/Linux Rolling"
+NAME="Kali GNU/Linux"
+VERSION_ID="2026.3"
+VERSION="2026.3"
+VERSION_CODENAME=kali-rolling
+ID=kali
+ID_LIKE=debian
+HOME_URL="https://www.kali.org/"
+SUPPORT_URL="https://forums.kali.org/"
+BUG_REPORT_URL="https://bugs.kali.org/"
+ANSI_COLOR="1;31"
+```
+
+### Observations
+- `PRETTY_NAME`: Displays the distribution's full name.
+- `NAME`: Identifies the operating system.
+- `VERSION_ID`: Shows the installed version, `2026.3`.
+- `VERSION_CODENAME`: Identifies the rolling-release codename.
+- `ID`: Identifies the distribution as Kali Linux.
+- `ID_LIKE`: Indicates its relationship to Debian.
+
+### Result
+The operating system and version information were retrieved successfully.
+
+---
+
+## Experiment 6: Linux File and Directory Management
+
+### Aim
+To create directories and files, navigate between directories, write text into a file, and display its contents.
+
+### Commands Used
+```bash
+mkdir recon-practice
+cd recon-practice
+touch notes.txt
+echo "Learning Linux file management for cybersecurity." > notes.txt
+cat notes.txt
+ls -l
+```
+
+### Output
+
+Output of `cat notes.txt`:
+```text
+Learning Linux file management for cybersecurity.
+```
+
+The `ls -l` command displays the file's permissions, owner, group, size, and filename.
+
+### Observations
+- `mkdir recon-practice`: Creates a directory.
+- `cd recon-practice`: Changes the current working directory.
+- `touch notes.txt`: Creates an empty file.
+- `echo "..." > notes.txt`: Writes text into the file, replacing any existing contents.
+- `cat notes.txt`: Displays the file contents.
+- `ls -l`: Lists files with detailed information.
+
+### Result
+Directory creation, navigation, file creation, writing, and reading were practiced using Linux commands.
+
+---
+
 ## Overall Conclusion
 
-The practical exercises introduced essential Linux fundamentals using Kali Linux. Basic terminal commands were used to inspect the working directory and logged-in user, file permissions were examined and modified, and user and group information was retrieved. These fundamentals provide a foundation for further cybersecurity exercises involving Linux security, reconnaissance, and security tools.
+These practical exercises introduced essential Linux fundamentals using Kali Linux. They covered basic terminal commands, file permissions, user and group identification, process monitoring, operating system identification, and file management. These skills provide a foundation for further cybersecurity work involving reconnaissance, network enumeration, and security analysis.
 
-## Safety Note
-All commands were performed in my own Kali Linux virtual machine. Further security testing will be restricted to systems and environments for which authorization has been obtained.
+## Safety and Authorization
+
+All practical activities are intended for my own Kali Linux virtual machine or other authorized lab environments. Any security testing beyond my own systems will be conducted only with appropriate permission.
