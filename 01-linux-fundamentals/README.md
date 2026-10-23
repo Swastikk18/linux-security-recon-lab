@@ -132,7 +132,36 @@ uid=1000(kali) gid=1000(kali) groups=1000(kali),4(adm),20(dialout),24(cdrom),25(
 The `id` command was executed successfully to identify the current user's identity and group memberships.
 
 ---
+---
 
+## Experiment 4: Viewing Running Processes
+
+### Aim
+To identify and understand processes running in the current Linux terminal session.
+
+### Command Used
+```bash
+ps
+```
+
+### Output
+```text
+PID    TTY      TIME       CMD
+2198   pts/0    00:00:00   zsh
+7686   pts/0    00:00:00   ps
+```
+
+### Observations
+- **PID:** Displays the unique process identification number.
+- **TTY:** Identifies the terminal associated with the process.
+- **TIME:** Displays the CPU time consumed by the process.
+- **CMD:** Shows the command associated with the process.
+- `zsh` is the shell used in the current terminal session.
+- `ps` displays the process information for the current terminal session; the command itself may also appear in the output.
+
+### Result
+The `ps` command was executed successfully to view processes associated with the current terminal session.
+---
 ## Overall Conclusion
 
 The practical exercises introduced essential Linux fundamentals using Kali Linux. Basic terminal commands were used to inspect the working directory and logged-in user, file permissions were examined and modified, and user and group information was retrieved. These fundamentals provide a foundation for further cybersecurity exercises involving Linux security, reconnaissance, and security tools.
