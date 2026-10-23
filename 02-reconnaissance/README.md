@@ -298,6 +298,27 @@ In Mini Task 2, Experiments 7–14, the following activities were performed:
 
 These experiments introduced essential Linux networking and reconnaissance concepts used in cybersecurity.
 
+#Additional
+### Practical: Passive Reconnaissance Using WHOIS
+
+**Aim:** To collect publicly available domain registration information using the WHOIS utility.
+
+**Command:**
+```bash
+whois xavier.ac.in
+```
+
+**Observations:**
+- Registrar: ERNET India
+- Domain creation date: 6 September 2018
+- Registry expiry date: 6 September 2028
+- Domain status: `ok`
+- DNSSEC status: `unsigned`
+- Registrant, administrative and technical contact details were mostly redacted.
+
+**Result:** Public domain registration information was collected successfully. The exercise demonstrated passive reconnaissance without performing a port scan or directly testing the target system.
+
+**Security Note:** WHOIS data represents a snapshot and may change. An unsigned DNSSEC status is an observation, not proof of a vulnerability. The exercise was limited to publicly available registration information.
 ## Safety and Authorization Note
 
 The Nmap scans in this report targeted local loopback addresses. DNS lookups were made for the specified domain. Future active scans of external systems should only be performed with explicit authorization. Private IP addresses, MAC addresses and other unnecessary network details should be masked in any publicly shared screenshots or reports.
