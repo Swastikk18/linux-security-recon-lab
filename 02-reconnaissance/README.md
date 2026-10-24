@@ -783,3 +783,300 @@ Temporary filesystems such as `/tmp` and `/dev/shm` were also displayed.
 Practicals 23–40 covered network route tracing, IP configuration, routing, connectivity testing, hostname resolution, DNS reconnaissance, listening socket inspection, Linux process management, system monitoring, and disk-space analysis.
 
 These exercises developed practical familiarity with Linux networking and administration commands. The observations represent results collected during the tests and should not be interpreted as a comprehensive security audit of the target domain or the Kali system.
+
+# Practicals 41–65: Security Tools and Controlled Reconnaissance Lab
+
+## Practical 41: Nmap Service Detection on Localhost
+
+**Objective:** To identify open TCP ports and detect services running on the local system.
+
+**Command:**
+```bash
+nmap -sV 127.0.0.1
+```
+
+**Observation:** The host was reachable, and the 1000 default TCP ports scanned were reported closed.
+
+**Conclusion:** Nmap service detection was performed successfully. No service versions were identified because no open ports were found in the scanned range.
+
+## Practical 42: Wireshark Version Verification
+
+**Objective:** To verify the installation of Wireshark.
+
+**Command:**
+```bash
+wireshark --version
+```
+
+**Observation:** Wireshark version 4.6.6 was installed.
+
+**Conclusion:** Wireshark was available for network traffic analysis.
+
+## Practical 43: Network Interface Identification
+
+**Objective:** To identify available network interfaces.
+
+**Command:**
+```bash
+ip -br link
+```
+
+**Observation:** The system displayed the loopback interface (`lo`) and Ethernet interface (`eth0`).
+
+**Conclusion:** The command successfully listed the network interfaces available in the Kali Linux environment.
+
+## Practical 44: Network Traffic Capture
+
+**Objective:** To capture network packets using Wireshark.
+
+**Procedure:** Wireshark was opened, a capture was started on `eth0`, and ordinary web browsing was performed.
+
+**Observation:** Network packets were captured successfully.
+
+**Conclusion:** Wireshark was used to observe traffic generated during normal browsing.
+
+## Practical 45: DNS Packet Filtering
+
+**Objective:** To isolate DNS traffic from a packet capture.
+
+**Display filter:**
+```text
+dns
+```
+
+**Observation:** DNS packets appeared in the capture and a DNS packet was inspected.
+
+**Conclusion:** Wireshark display filters can help identify DNS-related network activity.
+
+## Practical 46: TCP Packet Filtering
+
+**Objective:** To view TCP packets in a capture.
+
+**Display filter:**
+```text
+tcp
+```
+
+**Observation:** TCP packets were displayed successfully.
+
+**Conclusion:** The filter helped isolate TCP traffic for analysis.
+
+## Practical 47: TCP Flag Observation
+
+**Objective:** To inspect TCP control flags.
+
+**Procedure:** A TCP packet was selected in Wireshark and its flags were examined.
+
+**Observation:** The ACK (Acknowledgment) flag was observed.
+
+**Conclusion:** TCP flags provide information about connection and data-delivery behavior.
+
+## Practical 48: HTTP Traffic Inspection
+
+**Objective:** To identify HTTP packets in captured traffic.
+
+**Display filter:**
+```text
+http
+```
+
+**Observation:** Two packets matched the filter, and packet details were inspected.
+
+**Conclusion:** Wireshark can display HTTP traffic when such packets are present in the capture.
+
+## Practical 49: TLS Traffic Inspection
+
+**Objective:** To identify TLS-related packets.
+
+**Display filter:**
+```text
+tls
+```
+
+**Observation:** TLS packets were displayed in the capture.
+
+**Conclusion:** Wireshark can help identify encrypted transport sessions and inspect their visible protocol metadata.
+
+## Practical 50: Burp Suite Installation Verification
+
+**Objective:** To verify the installation of Burp Suite Community Edition.
+
+**Command:**
+```bash
+burpsuite --version
+```
+
+**Observation:** Burp Suite Community Edition version 2026.3.2 was reported. A Java environment warning was displayed before the version output.
+
+**Conclusion:** Burp Suite was available and launched successfully.
+
+## Practical 51: Burp Suite Project Setup
+
+**Objective:** To prepare Burp Suite for HTTP traffic analysis.
+
+**Procedure:** A temporary project was opened using the default configuration, and the built-in browser was launched.
+
+**Observation:** Burp Suite's project interface and browser were accessible.
+
+**Conclusion:** The environment was prepared for observing browser requests and responses.
+
+## Practical 52: Burp Suite Browser Verification
+
+**Objective:** To verify that the built-in browser could generate HTTP traffic through Burp Suite.
+
+**Procedure:** The browser was used to visit a website during the earlier reconnaissance exercise.
+
+**Observation:** HTTP request and response information was available in Burp Suite.
+
+**Conclusion:** Burp Suite was functioning as a web traffic inspection tool.
+
+## Practical 53: Basic HTTP Request and Response Observation
+
+**Objective:** To understand the structure of an HTTP request and response.
+
+**Observed request:**
+```http
+GET / HTTP/1.1
+Host: xavier.ac.in
+```
+
+**Observed response status:**
+```http
+HTTP/2 200 OK
+```
+
+**Conclusion:** The request asked for the website's root path, and the observed response indicated success. This was ordinary browsing only; no active security testing was performed against the external website.
+
+## Practical 54: OWASP ZAP Installation Verification
+
+**Objective:** To verify the OWASP ZAP installation.
+
+**Observation:** OWASP ZAP version 2.17.0 was reported, and its graphical interface opened. A Java deprecation warning was observed.
+
+**Conclusion:** ZAP was installed and its interface was accessible. An automated scan was not performed as part of this verification.
+
+## Practical 55: OWASP ZAP Interface Familiarization
+
+**Objective:** To become familiar with the ZAP interface.
+
+**Procedure:** The Sites panel, Contexts, Default Context, and History tab were explored.
+
+**Observation:** The main interface panels were accessible.
+
+**Conclusion:** Basic familiarity with the ZAP interface was established. This practical did not establish that a security scan had been completed.
+
+## Practical 56: Local Security Lab Preparation
+
+**Objective:** To prepare an isolated web application for controlled security testing.
+
+**Procedure:** Podman was used as the container runtime through a Docker-compatible command interface.
+
+**Observation:** Podman version 5.8.6 was available, and the container runtime information was checked.
+
+**Conclusion:** A container runtime was available for preparing a local training environment.
+
+## Practical 57: OWASP Juice Shop Image Retrieval
+
+**Objective:** To retrieve the intentionally vulnerable OWASP Juice Shop training application.
+
+**Command:**
+```bash
+podman pull docker.io/bkimminich/juice-shop
+```
+
+**Observation:** The image was pulled successfully.
+
+**Conclusion:** The Juice Shop image was available for local deployment.
+
+## Practical 58: Local Juice Shop Deployment
+
+**Objective:** To launch the training application locally.
+
+**Command:**
+```bash
+podman run -d --name juice-shop -p 127.0.0.1:3000:3000 docker.io/bkimminich/juice-shop
+```
+
+**Observation:** The container started successfully and was listed as running. Port 3000 was bound to `127.0.0.1`.
+
+**Conclusion:** The application was exposed on the local loopback interface rather than being intentionally published on all network interfaces.
+
+## Practical 59: Local Application Accessibility
+
+**Objective:** To verify that the local training application was accessible.
+
+**Procedure:** The URL below was opened in the Kali browser:
+```text
+http://127.0.0.1:3000
+```
+
+**Observation:** The OWASP Juice Shop homepage loaded successfully.
+
+**Conclusion:** The local application was available for further controlled testing.
+
+## Practical 60: Nmap Port and Service Check
+
+**Objective:** To check the application port and observe the service response.
+
+**Command:**
+```bash
+nmap -sV -p 3000 127.0.0.1
+```
+
+**Observation:** Port `3000/tcp` was open. Nmap did not confidently identify the service and displayed an uncertain service label (`ppp?`). Its response data contained an HTTP `200 OK` response and HTML associated with OWASP Juice Shop.
+
+**Conclusion:** The local application port was reachable. The uncertain Nmap service label was not treated as a confirmed service identification.
+
+## Practical 61: HTTP Response Header Inspection
+
+**Objective:** To inspect the HTTP headers returned by the local application.
+
+**Command:**
+```bash
+curl -I http://127.0.0.1:3000
+```
+
+**Observation:** The application returned `HTTP/1.1 200 OK`. Headers included `Content-Type: text/html; charset=UTF-8`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, and `Access-Control-Allow-Origin: *`.
+
+**Conclusion:** The application responded successfully and exposed HTTP response headers for review. The wildcard CORS header warrants context-specific review but does not, by itself, establish a vulnerability.
+
+## Practical 62: HTTP Response Body Inspection
+
+**Objective:** To inspect the beginning of the application's HTML response.
+
+**Command:**
+```bash
+curl -s http://127.0.0.1:3000 | head -n 15
+```
+
+**Observation:** The output contained HTML markup, the page title `OWASP Juice Shop`, and the application's copyright and licence information.
+
+**Conclusion:** The local web server returned the expected HTML page.
+
+## Practical 63: Burp Suite HTTP Traffic Analysis
+
+**Objective:** To observe HTTP traffic for the local training application.
+
+**Procedure:** The application was opened in Burp Suite's built-in browser, and the request was located under Proxy → HTTP history.
+
+**Observation:** The main page request returned `200 OK`.
+
+**Conclusion:** Burp Suite successfully displayed the request and its successful response for the local application.
+
+## Practical 64: HTTP Response Header Inspection in Burp Suite
+
+**Objective:** To view response details through Burp Suite.
+
+**Procedure:** The main page request was selected in HTTP history, and the Response panel was opened.
+
+**Observation:** The response status and headers were visible.
+
+**Conclusion:** Burp Suite provided a way to inspect HTTP response metadata without relying only on terminal commands.
+
+## Overall Summary
+
+These practicals covered Nmap, Wireshark, Burp Suite, OWASP ZAP installation and interface exploration, Linux networking, DNS/TCP/TLS traffic observation, and a controlled local web application environment.
+
+The OWASP Juice Shop lab was deployed on `127.0.0.1:3000` and verified using the browser, Nmap, curl, and Burp Suite. No conclusion about exploitability was drawn solely from the observed response headers. The ZAP automated scan and interpretation of its alerts remain pending.
+
+**Scope note:** Active testing in this lab is limited to the locally hosted OWASP Juice Shop. The earlier request to `xavier.ac.in` was ordinary browsing and observation, not an active vulnerability scan.
