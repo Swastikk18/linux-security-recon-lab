@@ -473,6 +473,7 @@ xavier.ac.in nameserver = sns7.webhostbox.net.
 
 **Conclusion:** Google Public DNS returned the same two nameservers as the earlier local-resolver query. This supports consistency between these two responses at the time of testing, but does not independently guarantee that all DNS data is correct.
 
+
 ## Overall Conclusion
 
 These experiments covered Linux firewall-status checks, authentication-log review, file-permission auditing, DNS SOA/TXT/DMARC lookups, WHOIS-based passive reconnaissance, and comparison of DNS resolver responses. They developed practical skills in interpreting system-security evidence and publicly available DNS information.
@@ -483,3 +484,302 @@ These experiments covered Linux firewall-status checks, authentication-log revie
 
 The Nmap scans in this report targeted local loopback addresses. DNS lookups were made for the specified domain. Future active scans of external systems should only be performed with explicit authorization. Private IP addresses, MAC addresses and other unnecessary network details should be masked in any publicly shared screenshots or reports.
 
+# Linux Security and Network Reconnaissance — Practicals 23–40
+
+## Practical 23: Network Route Tracing Using Traceroute
+
+**Aim:** To observe the network path toward a domain.
+
+**Command:**
+```bash
+traceroute -m 12 -w 2 xavier.ac.in
+```
+
+**Observation:**
+- The domain resolved to `162.241.27.33`.
+- The first hop responded from `10.0.2.2`.
+- Subsequent hops did not respond within the configured timeout.
+
+**Conclusion:** Traceroute identified the first responding hop. The remaining route could not be determined because intermediate devices may filter or ignore traceroute probes.
+
+## Practical 24: Network Interface Configuration
+
+**Aim:** To identify active network interfaces and assigned IP addresses.
+
+**Command:**
+```bash
+ip -br addr
+```
+
+**Observation:**
+- `lo` used the loopback addresses `127.0.0.1/8` and `::1/128`.
+- `eth0` was UP with IPv4 address `10.0.2.15/24`.
+- IPv6 unique-local and link-local addresses were also displayed.
+
+**Conclusion:** The command displayed network interfaces and their assigned addresses. The IPv4 configuration was consistent with a VirtualBox NAT network.
+
+## Practical 25: Inspecting the Routing Table
+
+**Aim:** To identify the default gateway and connected network routes.
+
+**Command:**
+```bash
+ip route
+```
+
+**Observation:**
+- Default gateway: `10.0.2.2`
+- Interface: `eth0`
+- Source IPv4 address: `10.0.2.15`
+- Connected subnet: `10.0.2.0/24`
+
+**Conclusion:** The routing table showed the default route and directly connected network, helping explain how outgoing traffic is routed.
+
+## Practical 26: Testing IP Connectivity
+
+**Aim:** To test connectivity to an external IP address.
+
+**Command:**
+```bash
+ping -c 4 8.8.8.8
+```
+
+**Observation:**
+- Four packets were transmitted.
+- Four packets were received.
+- Packet loss: 0%.
+- Average round-trip time: approximately 5.804 ms.
+
+**Conclusion:** The system successfully reached `8.8.8.8` during the test. This confirms connectivity to that IP at that time, not the availability of every internet service.
+
+## Practical 27: Hostname Resolution Using getent
+
+**Aim:** To resolve a domain using the system's configured name-resolution mechanism.
+
+**Command:**
+```bash
+getent hosts xavier.ac.in
+```
+
+**Observation:**
+```text
+162.241.27.33 xavier.ac.in
+```
+
+**Conclusion:** The system successfully resolved the domain to an IPv4 address during the test.
+
+## Practical 28: DNS A Record Lookup Using dig
+
+**Aim:** To retrieve the IPv4 address associated with a domain.
+
+**Command:**
+```bash
+dig xavier.ac.in A
+```
+
+**Observation:**
+- Status: `NOERROR`
+- One answer record was returned.
+- IPv4 address: `162.241.27.33`
+- Query time: 24 ms.
+
+**Conclusion:** The A record was successfully retrieved using `dig`.
+
+## Practical 29: DNS Nameserver Lookup Using dig
+
+**Aim:** To identify the domain's listed nameservers.
+
+**Command:**
+```bash
+dig xavier.ac.in NS
+```
+
+**Observation:**
+- `sns7.webhostbox.net`
+- `sns8.webhostbox.net`
+
+The response returned two NS records.
+
+**Conclusion:** The query successfully retrieved the domain's NS records. This does not independently verify nameserver security or availability.
+
+## Practical 30: DNS Mail Exchange Lookup Using dig
+
+**Aim:** To identify the domain's mail exchange records.
+
+**Command:**
+```bash
+dig xavier.ac.in MX
+```
+
+**Observation:**
+Five MX records were returned, associated with Google mail infrastructure:
+- Priority 1: `aspmx.l.google.com`
+- Priority 5: `alt1.aspmx.l.google.com`
+- Priority 5: `alt2.aspmx.l.google.com`
+- Priority 10: `alt3.aspmx.l.google.com`
+- Priority 10: `alt4.aspmx.l.google.com`
+
+Lower MX priority values indicate higher preference.
+
+**Conclusion:** The domain's MX records were successfully retrieved, indicating the configured mail exchange destinations.
+
+## Practical 31: DNS TXT and SPF Record Lookup
+
+**Aim:** To retrieve and interpret the domain's TXT/SPF record.
+
+**Command:**
+```bash
+dig xavier.ac.in TXT
+```
+
+**Observation:**
+```text
+"v=spf1 a mx include:websitewelcome.com ~all"
+```
+
+The record includes the SPF version, `a` and `mx` mechanisms, an included SPF policy, and `~all` (softfail).
+
+**Conclusion:** The TXT/SPF record was retrieved successfully. Further analysis would be needed to assess whether the policy is appropriate and effective.
+
+## Practical 32: DMARC Record Lookup
+
+**Aim:** To query the conventional DMARC TXT record location.
+
+**Command:**
+```bash
+dig _dmarc.xavier.ac.in TXT
+```
+
+**Observation:**
+- Status: `NXDOMAIN`
+- Answer records: 0
+- An SOA record appeared in the authority section.
+
+**Conclusion:** The queried name returned `NXDOMAIN`, consistent with the earlier `nslookup` result. This lookup alone is not sufficient to make a definitive claim about the domain's overall DMARC configuration.
+
+## Practical 33: DNS Verification Using Google Public DNS
+
+**Aim:** To compare DNS resolution using a public resolver.
+
+**Command:**
+```bash
+dig @8.8.8.8 xavier.ac.in A
+```
+
+**Observation:**
+- Resolver: `8.8.8.8`
+- Status: `NOERROR`
+- Returned IPv4 address: `162.241.27.33`
+- Query time: 16 ms.
+
+The returned address matched the result from the default resolver in earlier tests.
+
+**Conclusion:** Both resolvers returned consistent A-record results at the times tested.
+
+## Practical 34: Inspecting Listening Network Sockets
+
+**Aim:** To inspect listening TCP/UDP sockets and associated processes.
+
+**Command:**
+```bash
+sudo ss -tulnp
+```
+
+**Observation:** The command displayed column headers but no socket entries.
+
+**Conclusion:** No listening sockets were displayed by this command at the time of testing. This result does not establish that the system has no network activity or that every service is inactive.
+
+## Practical 35: Listing Running Processes
+
+**Aim:** To inspect running processes and their resource usage.
+
+**Command:**
+```bash
+ps aux | head -10
+```
+
+**Observation:** The output displayed process owners, PIDs, CPU and memory usage, process states, and command names. System initialization and kernel threads appeared in the output.
+
+**Conclusion:** The `ps` command provides a snapshot of running processes and selected resource-usage information.
+
+## Practical 36: Live Process Monitoring
+
+**Aim:** To monitor running processes and system resource usage in real time.
+
+**Command:**
+```bash
+top
+```
+
+**Observation:** The interactive display showed process IDs, users, priorities, memory usage, CPU usage, process states, and accumulated CPU time.
+
+**Conclusion:** The `top` command supports continuous monitoring of processes and system resource usage. Pressing `q` exits the display.
+
+## Practical 37: Listing Processes for a Specific User
+
+**Aim:** To filter processes belonging to a particular user.
+
+**Command:**
+```bash
+ps -u kali
+```
+
+**Observation:** The output included desktop environment processes, VirtualBox integration processes, the terminal application, the shell, and the `ps` command.
+
+**Conclusion:** The command can filter process listings by user, helping administrators inspect user-specific activity.
+
+## Practical 38: Viewing the Process Hierarchy
+
+**Aim:** To examine parent-child relationships between processes.
+
+**Command:**
+```bash
+pstree -p
+```
+
+**Observation:** The command executed successfully and displayed the process hierarchy with process IDs.
+
+**Conclusion:** `pstree -p` helps visualize how processes are organized and related to one another.
+
+## Practical 39: Checking System Uptime and Load Average
+
+**Aim:** To check system uptime, logged-in users, and recent load averages.
+
+**Command:**
+```bash
+uptime
+```
+
+**Observation:**
+- Uptime: approximately 7 hours and 6 minutes.
+- Logged-in users: 1.
+- Load averages: 0.13, 0.18, and 0.17 for the 1-, 5-, and 15-minute intervals, respectively.
+
+**Conclusion:** The command provides a quick summary of system uptime and recent load. Load average is not a direct CPU-usage percentage and should be interpreted in the context of available CPU cores.
+
+## Practical 40: Checking Disk Space Usage
+
+**Aim:** To inspect the space used and available on mounted filesystems.
+
+**Command:**
+```bash
+df -h
+```
+
+**Observation:**
+- Main filesystem `/dev/sda1`: 79 GB total.
+- Used space: 17 GB.
+- Available space: 58 GB.
+- Reported usage: 22%.
+
+Temporary filesystems such as `/tmp` and `/dev/shm` were also displayed.
+
+**Conclusion:** The command displayed filesystem capacity and usage in human-readable units. The main filesystem had approximately 58 GB available at the time of testing.
+
+---
+
+## Overall Conclusion
+
+Practicals 23–40 covered network route tracing, IP configuration, routing, connectivity testing, hostname resolution, DNS reconnaissance, listening socket inspection, Linux process management, system monitoring, and disk-space analysis.
+
+These exercises developed practical familiarity with Linux networking and administration commands. The observations represent results collected during the tests and should not be interpreted as a comprehensive security audit of the target domain or the Kali system.
