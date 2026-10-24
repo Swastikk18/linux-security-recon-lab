@@ -319,6 +319,166 @@ whois xavier.ac.in
 **Result:** Public domain registration information was collected successfully. The exercise demonstrated passive reconnaissance without performing a port scan or directly testing the target system.
 
 **Security Note:** WHOIS data represents a snapshot and may change. An unsigned DNSSEC status is an observation, not proof of a vulnerability. The exercise was limited to publicly available registration information.
+# Linux Security Audits and DNS Reconnaissance — Experiments 15–22
+
+## Experiment 15: Checking Linux Firewall Status
+
+**Aim:** To inspect the availability and status of firewall components in Kali Linux.
+
+**Commands used:**
+```bash
+command -v ufw
+sudo nft list ruleset
+systemctl is-active nftables
+```
+
+**Observations:**
+- `ufw` was not found using `command -v ufw`.
+- `sudo nft list ruleset` returned no visible rules.
+- `systemctl is-active nftables` returned `inactive`.
+
+**Conclusion:** The checks did not show an active nftables service or visible nftables rules. This does not establish the complete firewall status of the system.
+
+## Experiment 16: Inspecting Linux Authentication Logs
+
+**Aim:** To inspect system journal entries related to authentication and sudo activity.
+
+**Command used:**
+```bash
+sudo journalctl -b | grep -iE 'authentication failure|failed password|sudo:' | tail -20
+```
+
+**Observations:** The output included sudo session-opened and session-closed entries associated with normal administrative activity.
+
+**Conclusion:** The displayed entries showed sudo session activity. No failed-login event was established from the shown output.
+
+## Experiment 17: Auditing File Permissions
+
+**Aim:** To identify files in the home directory with group-write or others-write permission bits.
+
+**Command used:**
+```bash
+find "$HOME" -maxdepth 2 -type f -perm /0022 -ls 2>/dev/null
+```
+
+**Observations:** Two files were listed:
+- `/home/kali/.cache/zcompdump`
+- `/home/kali/.config/user-dirs.locale`
+
+Both had permissions displayed as `-rw-rw-r--`.
+
+**Conclusion:** The listed files allowed their owner and group to write, while others had read permission only. The output alone does not establish a security vulnerability.
+
+## Experiment 18: DNS SOA Record Analysis
+
+**Aim:** To examine the Start of Authority (SOA) record for a domain.
+
+**Command used:**
+```bash
+nslookup -type=SOA www.xavier.ac.in
+```
+
+**Observations:**
+- The `www` hostname was returned as an alias of `xavier.ac.in`.
+- SOA origin: `sns7.webhostbox.net`
+- SOA mail field: `root.sh004.webhostbox.net`
+- Serial: `2026101501`
+- Refresh: `86400` seconds
+- Retry: `7200` seconds
+- Expire: `3600000` seconds
+- Minimum: `86400` seconds
+
+**Conclusion:** The query returned zone-management metadata, including the serial number and timing values. The minimum field is commonly relevant to negative DNS caching.
+
+## Experiment 19: DNS TXT and SPF Record Analysis
+
+**Aim:** To inspect the domain's TXT record containing an SPF policy.
+
+**Command used:**
+```bash
+nslookup -type=TXT xavier.ac.in
+```
+
+**Observed TXT record:**
+```text
+v=spf1 a mx include:websitewelcome.com ~all
+```
+
+**Analysis:**
+- `v=spf1`: identifies the SPF policy version.
+- `a`: authorizes addresses matched by the domain's A-record mechanism.
+- `mx`: authorizes addresses matched by the domain's MX mechanism.
+- `include:websitewelcome.com`: references another domain's SPF policy.
+- `~all`: specifies a softfail for sources not matched by the preceding mechanisms.
+
+**Conclusion:** The query returned an SPF policy in a TXT record. This observation alone does not verify that the policy is optimally configured.
+
+## Experiment 20: DMARC Record Verification
+
+**Aim:** To query the conventional DMARC record location.
+
+**Command used:**
+```bash
+nslookup -type=TXT _dmarc.xavier.ac.in
+```
+
+**Observation:**
+```text
+server can't find _dmarc.xavier.ac.in: NXDOMAIN
+```
+
+**Conclusion:** The resolver returned NXDOMAIN for the queried name, so the lookup did not retrieve a DMARC TXT record. This result should not be treated as conclusive proof of the domain's current DMARC configuration without further authoritative verification.
+
+## Experiment 21: Passive Reconnaissance Using WHOIS
+
+**Aim:** To collect publicly available domain registration information.
+
+**Command used:**
+```bash
+whois xavier.ac.in
+```
+
+**Observations from the returned output:**
+- Domain: `xavier.ac.in`
+- Registrar: ERNET India
+- Creation date: `2018-09-06`
+- Registry expiry date: `2028-09-06`
+- Domain status: `ok`
+- DNSSEC: unsigned
+- Registrant organization: Xavier Institute of Engineering
+- Some contact fields were redacted.
+
+The WHOIS output listed `ns1.sh004.webhostbox.net` and `ns2.sh004.webhostbox.net` as nameservers, while the earlier NS lookup returned `sns7.webhostbox.net` and `sns8.webhostbox.net`.
+
+**Conclusion:** WHOIS provided registration metadata without requiring an active port scan. The difference between nameserver listings should be investigated separately; it may reflect different or outdated registry and DNS information. An unsigned DNSSEC status alone does not prove a vulnerability.
+
+## Experiment 22: DNS Response Verification Using Google Public DNS
+
+**Aim:** To compare nameserver results from a public resolver with a previously used local resolver.
+
+**Command used:**
+```bash
+nslookup -type=NS xavier.ac.in 8.8.8.8
+```
+
+**Observation:**
+```text
+Server:         8.8.8.8
+Address:        8.8.8.8#53
+
+Non-authoritative answer:
+xavier.ac.in nameserver = sns8.webhostbox.net.
+xavier.ac.in nameserver = sns7.webhostbox.net.
+```
+
+**Conclusion:** Google Public DNS returned the same two nameservers as the earlier local-resolver query. This supports consistency between these two responses at the time of testing, but does not independently guarantee that all DNS data is correct.
+
+## Overall Conclusion
+
+These experiments covered Linux firewall-status checks, authentication-log review, file-permission auditing, DNS SOA/TXT/DMARC lookups, WHOIS-based passive reconnaissance, and comparison of DNS resolver responses. They developed practical skills in interpreting system-security evidence and publicly available DNS information.
+
+**Safety note:** DNS and WHOIS queries were used for information gathering. Any active scanning or security testing of systems outside a controlled lab requires explicit authorization.
+
 ## Safety and Authorization Note
 
 The Nmap scans in this report targeted local loopback addresses. DNS lookups were made for the specified domain. Future active scans of external systems should only be performed with explicit authorization. Private IP addresses, MAC addresses and other unnecessary network details should be masked in any publicly shared screenshots or reports.
