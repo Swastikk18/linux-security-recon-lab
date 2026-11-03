@@ -1076,7 +1076,149 @@ curl -s http://127.0.0.1:3000 | head -n 15
 ## Overall Summary
 
 These practicals covered Nmap, Wireshark, Burp Suite, OWASP ZAP installation and interface exploration, Linux networking, DNS/TCP/TLS traffic observation, and a controlled local web application environment.
+# Cybersecurity Fundamentals Report & Practical Lab Record
+## Practical 65–68: Web Application Security Assessment
 
+**Environment:** Kali Linux (VirtualBox)  
+**Target Application:** OWASP Juice Shop  
+**Target URL:** `http://127.0.0.1:3000`  
+**Date:** 3 November 2026
+
+---
+
+### Practical 65: HTTP Request and Response Analysis Using Burp Suite
+
+**Objective:**  
+To understand how HTTP requests and responses can be captured and inspected using Burp Suite.
+
+**Tools Used:**
+- Burp Suite Community Edition
+- OWASP Juice Shop
+- Kali Linux Browser
+
+**Procedure:**
+1. Opened Burp Suite.
+2. Used the built-in browser to access the locally hosted OWASP Juice Shop.
+3. Navigated to the application homepage.
+4. Opened the HTTP History section in Burp Suite.
+5. Selected the GET request made to the application.
+6. Inspected the corresponding HTTP response and headers.
+
+**Observations:**
+- The application homepage generated an HTTP GET request.
+- The server returned an HTTP `200 OK` response.
+- Request and response details were visible in Burp Suite.
+- The HTTP response headers could be inspected.
+
+**Result:**  
+Successfully captured and inspected HTTP traffic between the browser and the locally hosted web application using Burp Suite.
+
+---
+
+### Practical 66: Automated Web Application Scanning Using OWASP ZAP
+
+**Objective:**  
+To understand automated web application scanning using OWASP ZAP against a controlled local testing environment.
+
+**Tools Used:**
+- OWASP ZAP
+- OWASP Juice Shop
+- Kali Linux
+
+**Target:** `http://127.0.0.1:3000`
+
+**Procedure:**
+1. Started the OWASP Juice Shop container.
+2. Opened OWASP ZAP.
+3. Selected the Automated Scan option.
+4. Entered the local Juice Shop URL.
+5. Started the automated scan.
+6. Observed spidering and active scanning activities.
+
+**Observations:**
+- ZAP successfully started spidering the application.
+- Spider scanning completed.
+- Active scanning started against 239 discovered nodes.
+- SQL Injection scanning generated two alerts.
+- The ZAP process was terminated before the complete scan finished.
+
+**Limitation:**  
+The scan was incomplete due to the ZAP process terminating unexpectedly. The two SQL Injection alerts were not independently verified and must not be treated as confirmed vulnerabilities.
+
+**Result:**  
+Successfully initiated automated web application scanning and observed the scanning process. Complete vulnerability assessment remains pending.
+
+---
+
+### Practical 67: ZAP Alerts Analysis
+
+**Status:** Skipped.
+
+This practical was intentionally skipped. No vulnerability analysis or verification was claimed.
+
+---
+
+### Practical 68: Security Assessment Findings Documentation
+
+**Objective:**  
+To document observations and findings from the local web application security assessment.
+
+**Tools Used:**
+- Nmap
+- cURL
+- Burp Suite
+- OWASP ZAP
+
+**Observations:**
+
+**1. Application Accessibility**
+- The Juice Shop application was accessible through localhost.
+- Port `3000` was identified as open.
+- HTTP response status was `200 OK`.
+
+**2. HTTP Security Headers**
+
+The following headers were observed:
+
+| Header | Observed Value |
+|---|---|
+| X-Content-Type-Options | nosniff |
+| X-Frame-Options | SAMEORIGIN |
+| Access-Control-Allow-Origin | * |
+
+These values were recorded for further security review. Their presence alone does not establish a vulnerability.
+
+**3. Burp Suite**
+- HTTP GET request captured.
+- Server response inspected.
+- HTTP headers reviewed.
+
+**4. OWASP ZAP**
+- Spider scan completed.
+- Active scan started.
+- Two SQL Injection alerts appeared in the partial scan output.
+- Alerts were not verified because the scan terminated unexpectedly.
+
+**Limitations:**
+- The automated ZAP scan was incomplete.
+- Alert details were not independently verified.
+- No unverified alert was classified as a confirmed vulnerability.
+
+**Conclusion:**  
+The practical activities provided hands-on experience with web application reconnaissance, HTTP traffic analysis, automated security scanning, and security findings documentation in a controlled local environment.
+
+---
+
+## Overall Summary
+
+| Practical | Activity | Status |
+|---|---|---|
+| 65 | Burp Suite HTTP Analysis | Completed |
+| 66 | OWASP ZAP Automated Scan | Partially Completed |
+| 67 | ZAP Alerts Analysis | Skipped |
+| 68 | Security Findings Documentation | Completed |
+
+**Final Note:** All testing was conducted against the locally hosted OWASP Juice Shop application for educational purposes.
 The OWASP Juice Shop lab was deployed on `127.0.0.1:3000` and verified using the browser, Nmap, curl, and Burp Suite. No conclusion about exploitability was drawn solely from the observed response headers. The ZAP automated scan and interpretation of its alerts remain pending.
 
 **Scope note:** Active testing in this lab is limited to the locally hosted OWASP Juice Shop. The earlier request to `xavier.ac.in` was ordinary browsing and observation, not an active vulnerability scan.
