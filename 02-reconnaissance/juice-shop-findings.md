@@ -1,0 +1,43 @@
+# OWASP Juice Shop – Security Assessment Findings
+
+## 1. Assessment Details
+- Application: OWASP Juice Shop
+- Environment: Kali Linux (VirtualBox)
+- Target URL: http://127.0.0.1:3000
+- Assessment Type: Local Security Testing
+- Tools Used: Nmap, cURL, Burp Suite, OWASP ZAP
+- Assessment Date: 3 November 2026
+
+## 2. Scope
+The assessment was performed only against the locally hosted OWASP Juice Shop application.
+
+## 3. Observations
+
+### Observation 1: Application Accessibility
+- The application was accessible on localhost.
+- HTTP response status: 200 OK.
+- Nmap identified port 3000 as open.
+
+### Observation 2: HTTP Security Headers
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: SAMEORIGIN
+- Access-Control-Allow-Origin: *
+
+These headers were observed during HTTP response inspection. Further analysis is required before classifying any security weakness.
+
+### Observation 3: Burp Suite Inspection
+- Captured the application's HTTP GET request.
+- Inspected the server response and HTTP headers.
+
+### Observation 4: OWASP ZAP Scan
+- Spider scanning completed.
+- Active scanning started against the local application.
+- The ZAP process was terminated before the complete scan finished.
+- Results require further verification.
+
+## 4. Limitations
+- The automated ZAP scan was incomplete.
+- No vulnerability is classified as confirmed based only on incomplete scan output.
+
+## 5. Conclusion
+The practical provided experience in local web application reconnaissance, HTTP response inspection, proxy-based traffic analysis, and automated security assessment.
