@@ -1214,7 +1214,7 @@ The practical activities provided hands-on experience with web application recon
 | Practical | Activity | Status |
 |---|---|---|
 | 65 | Burp Suite HTTP Analysis | Completed |
-| 66 | OWASP ZAP Automated Scan | Partially Completed |
+| 66 | OWASP ZAP Automated Scan | Completed |
 | 67 | ZAP Alerts Analysis | Skipped |
 | 68 | Security Findings Documentation | Completed |
 
